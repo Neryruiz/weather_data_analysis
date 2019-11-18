@@ -16,23 +16,24 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class StormEventMR {
-	//Mapper for stromEvent data set	
+	//Mapper class for stromEvent data set	
 	public static class DataMapper extends Mapper <LongWritable, Text, Text, IntWritable> {
-		//private IntWritable numDeaths;
-		//private IntWritable numInjuries;
-		//private Text stateInjuries; 
-		//private Text stateDeath;
-
-		//public void map(LongWritable key, Text value, OutputCollector <Text, IntWritable> output) throws IOException {
+		
+		//Mapper function
 		public void map(LongWritable key, Text value, Context output) throws IOException, InterruptedException {		
 			String valueString = value.toString();
+			
+			//split string to a string []
 			String [] Data = valueString.split(",");
 
+			///extract digits for string
 			String t_d = Data[22].replaceAll("\\D+","");
 			String t_ij = Data[20].replaceAll("\\D+","");
 			
-			int tmp_d;// = 
-			int tmp_ij;// = Integer.parseInt(Data[20]);
+			int tmp_d; 
+			int tmp_ij;
+			
+			//convert string to int
 			if(!t_d.equals("")){
 				tmp_d = Integer.parseInt(t_d);
 			}else{
@@ -45,37 +46,37 @@ public class StormEventMR {
 				tmp_ij = 0;
 			}
 
-
+			//create Inwritable data types
 			IntWritable numDeaths = new IntWritable(tmp_d);
 			IntWritable numInjuries = new IntWritable(tmp_ij);
 			
+			//collect the data from right column 
 			Text stateInjuries = new Text(Data[8]+"_injuries");
 			Text stateDeaths = new Text(Data[8]+"_deaths");			
-
-			//output.collect(stateInjuries, numInjuries);
-			//output.collect(stateDeaths, numDeaths);
 			
+			//output a key and it value
 			output.write(stateInjuries, numInjuries);
 			output.write(stateDeaths, numDeaths);
 		}
 	}
 
-	//need to fix not working
+	//reduce class for stromevent folder
 	public static class ReducerSum extends Reducer<Text, IntWritable, Text, IntWritable> {
 		IntWritable result = new IntWritable();
 		public void reduce(Text t_key, Iterable<IntWritable> values, Context output) throws IOException, InterruptedException {
-			//Text k = t_key;
 			int num = 0;
-			//while(values.hasNext()){
+			//sum up the values
 			for (IntWritable val : values){
-				//IntWritable value = (IntWritable) values.next();
 				num += (int)val.get();
 			}
 			result.set(num);
+			
+			//output the key with summed values
 			output.write(t_key, result);
 		}
 	}
 
+	//main class
 	public static void main(String[] args) throws Exception{
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf, "count Death and Injuries");
@@ -85,8 +86,6 @@ public class StormEventMR {
     		job.setReducerClass(ReducerSum.class);
     		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
-		//job.setInputFormat(TextInputFormat.class);
-		//job.setOutputFormat(TextOutputFormat.class);
     		FileInputFormat.addInputPath(job, new Path(args[0]));
     		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
