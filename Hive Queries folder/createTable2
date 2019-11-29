@@ -48,7 +48,7 @@ END_LON DOUBLE,
 EPISODE_NARRATIVE VARCHAR(255),
 EVENT_NARRATIVE VARCHAR(255),
 DATA_SOURCE VARCHAR(255))
-ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION 'gs://noaa_weather_data/NOAA_Strom_DataSet/StormEvents_details/StormEvents_Details/' tblproperties ("skip.header.line.count"="1");
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION 'gs://noaa_weather_data/NOAA_Strom_DataSet/StormEvents_details/StormEvents_Details/' tblproperties ("skip.header.line.count"="1", 'serialization.null.format'='0');
 
 CREATE EXTERNAL TABLE StormEvents_fatalites 
 (FAT_YEARMONTH INT, 
