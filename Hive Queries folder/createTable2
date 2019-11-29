@@ -62,7 +62,7 @@ FATALITY_AGE INT,
 FATALITY_SEX STRING, 
 FATALITY_LOCATION STRING, 
 EVENT_YEARMONTH INT) 
-ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION 'gs://noaa_weather_data/NOAA_Strom_DataSet/StormEvents_details/StormsEvents_Fatality/' tblproperties ("skip.header.line.count"="1");
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION 'gs://noaa_weather_data/NOAA_Strom_DataSet/StormEvents_details/StormsEvents_Fatality/' tblproperties ("skip.header.line.count"="1", 'serialization.null.format'='0');
 
 CREATE EXTERNAL TABLE StormEvents_locations
 (YEARMONTH INT, 
