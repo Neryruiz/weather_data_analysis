@@ -10,6 +10,9 @@ CREATE TABLE StormEvent_details_injuriesperstate as (SELECT STATE, SUM(CAST(INJU
 /*add up all damages cost per state and year and create a new table with output values*/
 CREATE TABLE StormEvent_details_costperstate as (SELECT STATE, SUM(CAST(SUBSTRING(DAMAGE_PROPERTY, 1, LENGTH(DAMAGE_PROPERTY)-1) AS INT)) AS DAMAGES, SUBSTRING(BEGIN_YEARMONTH, 1, 4) AS YEAR FROM StormEvent_details_reduced GROUP BY STATE, SUBSTRING(BEGIN_YEARMONTH, 1, 4));
 
+/*count weather events per year and state*/
+CREATE TABLE StormEvent_details_counttypeperstate as (SELECT STATE, YEAR, EVENT_TYPE, COUNT(EVENT_TYPE) AS TYPE_COUNT FROM StormEventS_details GROUP BY STATE, YEAR, EVENT_TYPE;
+
 
 
 
